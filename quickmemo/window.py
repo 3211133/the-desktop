@@ -12,13 +12,10 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QApplication,
-    QLabel,
     QMainWindow,
     QMenu,
     QStatusBar,
     QSystemTrayIcon,
-    QWidget,
-    QVBoxLayout,
 )
 
 from .config import Config, save_config
@@ -36,12 +33,8 @@ class MainWindow(QMainWindow):
         g = self.cfg.window
         self.setGeometry(g.x, g.y, g.w, g.h)
 
-        central = QWidget(self)
-        layout = QVBoxLayout(central)
-        placeholder = QLabel("QuickMemo\n\nCapsLock でトグル / Esc で戻る", central)
-        placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(placeholder)
-        self.setCentralWidget(central)
+        from .features.bunpo import BunpoWidget
+        self.setCentralWidget(BunpoWidget(parent=self))
 
         self.status = QStatusBar(self)
         self.setStatusBar(self.status)
@@ -108,13 +101,28 @@ class MainWindow(QMainWindow):
     # ── Controller への橋渡し ──────────────────────────────────────────────
 
     def on_hotkey(self) -> None:
-        """CapsLock / トレイ・メニュー経由のトグル要求。"""
+        """CapsLock / トレイ・メニュー経由のトグル要求。
+
+        順序が重要: controller.on_hotkey() の **前に** show/restore してはいけない。
+        事前に Qt をアクティブ化すると controller が「自分が前面」と誤判定して
+        ループする。focus.restore() (Win32 側) が最小化解除と前面化を担う。
+        その後で Qt の visible/minimized 状態を同期する。
+        """
         if self._controller is None:
             return
-        # 自分が見えていなければ先に show する (Controller は表示状態を知らない)
-        if not self.isVisible() or self.isMinimized():
-            self.showNormal()
-        self._controller.on_hotkey()
+        result = self._controller.on_hotkey()
+
+        from .controller import ToggleAction
+        if result.action is ToggleAction.ACTIVATE_SELF:
+            # focus.restore が Win32 で SW_RESTORE/SW_SHOW しているので、
+            # Qt 状態を後追いで合わせる
+            if self.isMinimized():
+                self.showNormal()
+            elif not self.isVisible():
+                self.show()
+        elif result.action is ToggleAction.HIDE_SELF:
+            # hide() でなく showMinimized() (Qt の visible 状態を保つ)
+            self.showMinimized()
 
     def return_to_prev(self) -> None:
         """Esc 経由の明示的「戻る」。"""
