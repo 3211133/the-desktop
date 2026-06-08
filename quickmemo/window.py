@@ -16,6 +16,8 @@ from PyQt6.QtWidgets import (
     QMenu,
     QStatusBar,
     QSystemTrayIcon,
+    QVBoxLayout,
+    QWidget,
 )
 
 from .config import Config, save_config
@@ -34,7 +36,15 @@ class MainWindow(QMainWindow):
         self.setGeometry(g.x, g.y, g.w, g.h)
 
         from .features.bunpo import BunpoWidget
-        self.setCentralWidget(BunpoWidget(parent=self))
+        from .features.remaining import RemainingWidget
+
+        central = QWidget(self)
+        v = QVBoxLayout(central)
+        v.setContentsMargins(0, 0, 0, 0)
+        v.setSpacing(0)
+        v.addWidget(RemainingWidget(parent=central))
+        v.addWidget(BunpoWidget(parent=central), stretch=1)
+        self.setCentralWidget(central)
 
         self.status = QStatusBar(self)
         self.setStatusBar(self.status)
