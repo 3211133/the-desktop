@@ -60,3 +60,27 @@ def test_format_entry_uses_short_datetime():
 def test_format_entry_fallback_on_invalid_ts():
     e = Entry(ts="not-a-date", text="x")
     assert format_entry(e) == "not-a-date  x"
+
+
+# ── Widget レベルの submit キー仕様 ──────────────────────────────────────────
+
+def test_submitline_plain_enter_does_not_submit(qtbot):
+    from PyQt6.QtCore import Qt
+    from quickmemo.features.bunpo import _SubmitLine
+    line = _SubmitLine()
+    qtbot.addWidget(line)
+    received = []
+    line.submit.connect(lambda: received.append(True))
+    qtbot.keyPress(line, Qt.Key.Key_Return)
+    assert received == []  # 素の Enter は無視 (IME 確定との衝突回避)
+
+
+def test_submitline_ctrl_enter_emits_submit(qtbot):
+    from PyQt6.QtCore import Qt
+    from quickmemo.features.bunpo import _SubmitLine
+    line = _SubmitLine()
+    qtbot.addWidget(line)
+    received = []
+    line.submit.connect(lambda: received.append(True))
+    qtbot.keyPress(line, Qt.Key.Key_Return, modifier=Qt.KeyboardModifier.ControlModifier)
+    assert received == [True]

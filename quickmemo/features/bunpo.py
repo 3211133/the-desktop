@@ -11,8 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QKeySequence, QShortcut
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QLineEdit,
     QListWidget,
@@ -20,6 +19,25 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
+
+class _SubmitLine(QLineEdit):
+    """Ctrl+Enter で submit を発火する QLineEdit。
+
+    通常の Enter は IME の変換確定と衝突するため、Ctrl+Enter のみを submit に割当てる。
+    Ctrl 修飾された Enter は IME を素通りするので、確定後でも安全に発火できる。
+    """
+
+    submit = pyqtSignal()
+
+    def keyPressEvent(self, e) -> None:
+        if (
+            e.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter)
+            and e.modifiers() & Qt.KeyboardModifier.ControlModifier
+        ):
+            self.submit.emit()
+            return
+        super().keyPressEvent(e)
 
 DEFAULT_PATH = Path.home() / ".quickmemo" / "bunpo.jsonl"
 
@@ -82,9 +100,9 @@ class BunpoWidget(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(8, 8, 8, 8)
 
-        self.input = QLineEdit(self)
-        self.input.setPlaceholderText("分報を書いて Enter")
-        self.input.returnPressed.connect(self._on_submit)
+        self.input = _SubmitLine(self)
+        self.input.setPlaceholderText("分報を書いて Ctrl+Enter")
+        self.input.submit.connect(self._on_submit)
         layout.addWidget(self.input)
 
         self.list = QListWidget(self)

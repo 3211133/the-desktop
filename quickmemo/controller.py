@@ -17,12 +17,14 @@ class ToggleAction(Enum):
     NOOP = auto()
     ACTIVATE_SELF = auto()
     RETURN_TO_PREV = auto()
+    HIDE_SELF = auto()  # 戻り先が無い/失敗時のフォールバック
 
 
 @dataclass
 class DecideResult:
     action: ToggleAction
-    target_hwnd: int  # ACTIVATE_SELF→自分のHWND, RETURN_TO_PREV→prev_hwnd, NOOP→0
+    target_hwnd: int  # ACTIVATE_SELF→自分のHWND, RETURN_TO_PREV→prev_hwnd, NOOP/HIDE_SELF→0
+    ok: bool = True   # RETURN_TO_PREV の restore 成否
 
 
 class ToggleController:
@@ -43,18 +45,34 @@ class ToggleController:
     def prev_hwnd(self) -> int:
         return self._prev_hwnd
 
+    def note_foreground_change(self, old_fg: int, new_fg: int) -> None:
+        """フォアグラウンド変化の通知。
+
+        QM が新たに前面になり、かつ前のフォアグラウンドが他アプリだったなら
+        それを「戻り先」として記録する。CapsLock 以外 (マウス・タスクバー等)
+        で QM に来た場合でも戻れるようにする。
+        """
+        my = self._get_my_hwnd()
+        if new_fg == my and old_fg and old_fg != my:
+            self._prev_hwnd = old_fg
+
     def decide(self) -> DecideResult:
         """次にとるアクションを決定する (副作用なし)。"""
         if self._is_self_active():
             if self._prev_hwnd:
                 return DecideResult(ToggleAction.RETURN_TO_PREV, self._prev_hwnd)
-            return DecideResult(ToggleAction.NOOP, 0)
+            # 戻り先がない場合は HIDE_SELF (OS が次の z-order を前面化する)
+            return DecideResult(ToggleAction.HIDE_SELF, 0)
 
         my = self._get_my_hwnd()
         return DecideResult(ToggleAction.ACTIVATE_SELF, my)
 
     def on_hotkey(self) -> DecideResult:
-        """CapsLock 押下時に呼ぶ。decide → 副作用 (focus 操作 + prev_hwnd 更新)。"""
+        """CapsLock 押下時に呼ぶ。decide → 副作用 (focus 操作 + prev_hwnd 更新)。
+
+        RETURN_TO_PREV で restore に失敗したら HIDE_SELF に格下げする
+        (戻り先が閉じられた等)。
+        """
         result = self.decide()
         if result.action is ToggleAction.ACTIVATE_SELF:
             fg = self._focus.get_foreground()
@@ -63,8 +81,13 @@ class ToggleController:
                 self._prev_hwnd = fg
             self._focus.restore(my)
         elif result.action is ToggleAction.RETURN_TO_PREV:
-            self._focus.restore(result.target_hwnd)
+            ok = self._focus.restore(result.target_hwnd)
             self._prev_hwnd = 0
+            if not ok:
+                # restore 失敗 → HIDE_SELF に格下げ
+                return DecideResult(ToggleAction.HIDE_SELF, 0, ok=False)
+            result.ok = True
+        # HIDE_SELF は副作用なし (window 側で hide する)
         return result
 
     def return_to_prev(self) -> bool:

@@ -41,7 +41,15 @@ def main() -> int:
 
     timer = QTimer()
     timer.setInterval(40)  # Windows hook timeout 余裕
+    last_fg = [0]
+
     def _tick() -> None:
+        # フォアグラウンド追跡 — マウス等で QM に来ても戻れるように
+        cur_fg = focus.get_foreground()
+        if cur_fg != last_fg[0]:
+            controller.note_foreground_change(last_fg[0], cur_fg)
+            last_fg[0] = cur_fg
+        # CapsLock 押下処理
         if hook.pressed_event.is_set():
             hook.pressed_event.clear()
             window.on_hotkey()

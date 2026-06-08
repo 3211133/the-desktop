@@ -101,13 +101,28 @@ class MainWindow(QMainWindow):
     # ── Controller への橋渡し ──────────────────────────────────────────────
 
     def on_hotkey(self) -> None:
-        """CapsLock / トレイ・メニュー経由のトグル要求。"""
+        """CapsLock / トレイ・メニュー経由のトグル要求。
+
+        順序が重要: controller.on_hotkey() の **前に** show/restore してはいけない。
+        事前に Qt をアクティブ化すると controller が「自分が前面」と誤判定して
+        ループする。focus.restore() (Win32 側) が最小化解除と前面化を担う。
+        その後で Qt の visible/minimized 状態を同期する。
+        """
         if self._controller is None:
             return
-        # 自分が見えていなければ先に show する (Controller は表示状態を知らない)
-        if not self.isVisible() or self.isMinimized():
-            self.showNormal()
-        self._controller.on_hotkey()
+        result = self._controller.on_hotkey()
+
+        from .controller import ToggleAction
+        if result.action is ToggleAction.ACTIVATE_SELF:
+            # focus.restore が Win32 で SW_RESTORE/SW_SHOW しているので、
+            # Qt 状態を後追いで合わせる
+            if self.isMinimized():
+                self.showNormal()
+            elif not self.isVisible():
+                self.show()
+        elif result.action is ToggleAction.HIDE_SELF:
+            # hide() でなく showMinimized() (Qt の visible 状態を保つ)
+            self.showMinimized()
 
     def return_to_prev(self) -> None:
         """Esc 経由の明示的「戻る」。"""
