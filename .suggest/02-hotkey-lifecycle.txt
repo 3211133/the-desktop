@@ -1,0 +1,24 @@
+# CapsLockHook のライフサイクルとエラー処理
+
+## 現状
+- `install()` はスレッドを起動し、最大 2 秒 `_ready` を待つ。
+- `_run()` は `SetWindowsHookExW` の成否にかかわらず `_ready` を set する。
+- `uninstall()` は `UnhookWindowsHookEx` だけを呼び、メッセージループ中のスレッドを終了させる明示的な通知がない。
+- `_thread` は `None` に戻らないため、一度 uninstall した後に再 install する設計になっていない。
+
+## 課題
+1. フックのインストール失敗が呼び出し側に伝わらない。
+   - `SetWindowsHookExW` が 0 を返しても `install()` は成功したように見える。
+   - その場合、CapsLock が効かない原因を UI / ログから追いづらい。
+2. アプリ終了時にフックスレッドが自然終了する保証が弱い。
+   - daemon thread なのでプロセス終了には巻き込まれるが、明示的な shutdown としては不完全。
+3. 多重 install は no-op だが、uninstall 後の状態遷移が曖昧。
+
+## 対応案
+- `SetWindowsHookExW` の戻り値を検査し、失敗時は `ctypes.get_last_error()` を含む例外または状態を返す。
+- フック用スレッド ID を保持し、`uninstall()` で `PostThreadMessage(WM_QUIT)` を投げて `GetMessageW` ループを抜けさせる。
+- `uninstall()` 後に `_thread`, `_hook_id`, `_ready` を整理し、再 install 可能にするか、再 install 非対応として明示する。
+- `app.py` 側では install 失敗時にステータスバーやダイアログでユーザーへ通知する。
+
+## 優先度
+高。常駐アプリの中核機能である CapsLock トグルが失敗した場合に検知・復旧しづらい。

@@ -1,0 +1,21 @@
+# quickmemo/features の拡張契約
+
+## 現状
+README では「機能は `quickmemo/features/` 配下に Widget として追加していく想定」と説明されている。
+一方で、現時点の `quickmemo/features/` は空に近く、Widget をどう発見・生成・配置するかの契約がまだない。
+
+## 課題
+- 機能追加時に、各 feature が MainWindow や app 配線へ直接依存しやすい。
+- feature のライフサイクル、設定保存、ショートカット、メニュー追加、テスト方法が都度ばらつく可能性がある。
+- 「空のフレーム」としては良い初期状態だが、次に機能を増やす段階で設計判断が散らばりやすい。
+
+## 対応案
+- feature の最小 Protocol / 抽象を定義する。
+  - 例: `id`, `display_name`, `create_widget(parent, context)` など。
+- `features/__init__.py` に registry を置き、MainWindow は registry から中央 Widget やタブを構築する。
+- feature ごとの設定 namespace を決める。
+  - 例: `config.features[feature_id]` のように分離。
+- 最初のサンプル feature を 1 つ追加し、テストで feature contract を固定する。
+
+## 優先度
+中。現在はまだ空フレームなので緊急ではないが、最初の実機能追加前に決めておくと後戻りが少ない。

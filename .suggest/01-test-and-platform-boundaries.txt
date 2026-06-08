@@ -1,0 +1,31 @@
+# テスト実行環境とプラットフォーム境界
+
+## 現状
+- `tests/test_app.py` は「全モジュールが import できる」ことを期待しているが、Linux 環境では `quickmemo.app` の import 時点で `PyQt6` が無いと失敗する。
+- `quickmemo.focus` / `quickmemo.hotkey` は import 時点で `ctypes.WinDLL("user32")` を評価するため、Windows 以外では `ctypes.WinDLL` が存在せず import できない。
+- Qt 系テストは `qtbot` fixture を前提にしているが、README のセットアップ手順は `PyQt6` のみで、`pytest-qt` が明示されていない。
+
+## 再現した結果
+`python -m pytest tests/ -v` を Linux / Python 3.12.13 で実行すると、13 passed / 3 failed / 6 errors。
+主な失敗は以下。
+- `ModuleNotFoundError: No module named 'PyQt6'`
+- `AttributeError: module 'ctypes' has no attribute 'WinDLL'`
+- `fixture 'qtbot' not found`
+
+## 課題
+このままだと、Windows 専用アプリであること自体は自然でも、CI や開発者の手元が Windows 以外の場合に pure 層のテストまで巻き添えで失敗する。
+また、README の依存関係だけではテスト環境が再現できない。
+
+## 対応案
+1. 実行時依存とテスト依存を明示する。
+   - 例: `requirements.txt` / `requirements-dev.txt` / `pyproject.toml` のいずれかを追加。
+   - dev 依存には `pytest`, `pytest-qt`, `PyQt6` を含める。
+2. Windows 専用実装は import 時点で Win32 DLL をロードしない。
+   - `Win32Focus.__init__()` や `CapsLockHook.install()` まで DLL ロードを遅延する。
+   - あるいは `sys.platform != "win32"` の場合は明示的な NotImplementedError / skip 可能な例外に寄せる。
+3. OS 依存テストに marker を付ける。
+   - Win32 実装のテストは `pytest.mark.skipif(sys.platform != "win32", ...)` を付ける。
+   - pure 層 (`controller.py`, `config.py`) はどの OS でも常に通す。
+
+## 優先度
+高。現状のテストコマンドがそのままでは失敗し、開発体験と CI 化の障害になりやすい。
