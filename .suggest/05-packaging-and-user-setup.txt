@@ -1,0 +1,22 @@
+# 配布・セットアップ手順
+
+## 現状
+README の起動手順は `pip install PyQt6` と `python -m quickmemo.app` のみ。
+Windows 常駐アプリとして必要になりそうな配布・起動まわりはまだ整理されていない。
+
+## 課題
+- テストに必要な `pytest` / `pytest-qt` が README にない。
+- アプリとして使う場合、毎回ターミナルから `python -m quickmemo.app` を実行する必要がある。
+- Windows 専用のグローバルキーボードフックを使うため、権限・セキュリティソフト・管理者実行の要否など、ユーザー環境差分の説明が必要になる可能性がある。
+- バージョン固定がないため、PyQt6 や Python の更新で挙動差分が出た際に切り分けづらい。
+
+## 対応案
+- `pyproject.toml` を追加し、runtime / dev 依存と entry point を定義する。
+  - 例: `quickmemo = "quickmemo.app:main"`
+- Windows 用の起動方法を用意する。
+  - 例: `.bat` / PowerShell script / ショートカット作成手順。
+- 将来的な配布を見据え、PyInstaller などでの exe 化方針をメモする。
+- README に「通常起動」「開発環境セットアップ」「テスト」「既知の制約」を分けて書く。
+
+## 優先度
+中。開発初期は問題になりにくいが、第三者が試す段階では最初につまずくポイントになりやすい。
