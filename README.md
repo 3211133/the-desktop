@@ -18,10 +18,14 @@
 
 ## 起動
 
+常駐用途では **pythonw** で起動するとコンソールが出ない:
+
 ```powershell
 pip install PyQt6
-python -m quickmemo.app
+pythonw -m quickmemo.app
 ```
+
+`python -m quickmemo.app` でも動くが起動シェルが残るので非推奨。
 
 ## テスト
 

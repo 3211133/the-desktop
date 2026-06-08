@@ -28,6 +28,10 @@ def main() -> int:
     cfg = load_config()
     focus = Win32Focus()
     hook = CapsLockHook()
+
+    # QM 構築前の前面ウィンドウを記録 (最初の戻り先のシード)
+    initial_fg = focus.get_foreground()
+
     window = MainWindow(cfg)
 
     controller = ToggleController(
@@ -41,7 +45,9 @@ def main() -> int:
 
     timer = QTimer()
     timer.setInterval(40)  # Windows hook timeout 余裕
-    last_fg = [0]
+    # last_fg を初期 fg で seed することで、最初の "→ QM" 変化で note_foreground_change が
+    # 起動時の前面ウィンドウを prev として記録する
+    last_fg = [initial_fg]
 
     def _tick() -> None:
         # フォアグラウンド追跡 — マウス等で QM に来ても戻れるように
