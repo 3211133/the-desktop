@@ -12,13 +12,10 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QApplication,
-    QLabel,
     QMainWindow,
     QMenu,
     QStatusBar,
     QSystemTrayIcon,
-    QWidget,
-    QVBoxLayout,
 )
 
 from .config import Config, save_config
@@ -36,12 +33,8 @@ class MainWindow(QMainWindow):
         g = self.cfg.window
         self.setGeometry(g.x, g.y, g.w, g.h)
 
-        central = QWidget(self)
-        layout = QVBoxLayout(central)
-        placeholder = QLabel("QuickMemo\n\nCapsLock でトグル / Esc で戻る", central)
-        placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(placeholder)
-        self.setCentralWidget(central)
+        from .features.bunpo import BunpoWidget
+        self.setCentralWidget(BunpoWidget(parent=self))
 
         self.status = QStatusBar(self)
         self.setStatusBar(self.status)
