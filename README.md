@@ -18,10 +18,17 @@
 
 ## 起動
 
-常駐用途では **pythonw** で起動するとコンソールが出ない:
+依存をインストールして:
 
 ```powershell
 pip install PyQt6
+```
+
+`QuickMemo.pyw` を **エクスプローラーでダブルクリック** すれば常駐起動する (コンソール無し)。
+
+CLI から起動したい場合は:
+
+```powershell
 pythonw -m quickmemo.app
 ```
 
