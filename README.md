@@ -18,10 +18,21 @@
 
 ## 起動
 
+依存をインストールして:
+
 ```powershell
 pip install PyQt6
-python -m quickmemo.app
 ```
+
+`QuickMemo.pyw` を **エクスプローラーでダブルクリック** すれば常駐起動する (コンソール無し)。
+
+CLI から起動したい場合は:
+
+```powershell
+pythonw -m quickmemo.app
+```
+
+`python -m quickmemo.app` でも動くが起動シェルが残るので非推奨。
 
 ## テスト
 
