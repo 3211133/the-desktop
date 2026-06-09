@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
         self.setGeometry(g.x, g.y, g.w, g.h)
 
         from .features.bunpo import BunpoWidget
+        from .features.news import NewsWidget
         from .features.remaining import RemainingWidget
         from .features.weather import WeatherWidget
         from .widgets import ResponsiveRow
@@ -53,7 +54,13 @@ class MainWindow(QMainWindow):
         top.add_widget(WeatherWidget(parent=top))
         v.addWidget(top)
 
-        v.addWidget(BunpoWidget(parent=central), stretch=1)
+        # 下段: 分報 + ニュース (同じく幅で縦横切替)
+        # 分報は履歴が縦に伸びるので少し広め (2 : 1)
+        bottom = ResponsiveRow(threshold=480, parent=central)
+        bottom.add_widget(BunpoWidget(parent=bottom), stretch=2)
+        bottom.add_widget(NewsWidget(parent=bottom), stretch=1)
+        v.addWidget(bottom, stretch=1)
+
         self.setCentralWidget(central)
 
         self.status = QStatusBar(self)

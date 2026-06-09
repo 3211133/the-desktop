@@ -13,6 +13,7 @@ import sys
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication
 
+from .bootstrap import ensure_default_configs
 from .config import load_config
 from .controller import ToggleController
 from .focus import Win32Focus
@@ -24,6 +25,9 @@ def main() -> int:
     app = QApplication(sys.argv)
     app.setApplicationName("the-desktop")
     app.setQuitOnLastWindowClosed(False)
+
+    # 初回起動: 不足している設定ファイルをデフォルト値で生成
+    ensure_default_configs()
 
     cfg = load_config()
     focus = Win32Focus()
