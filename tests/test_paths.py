@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from quickmemo import paths
+from the_desktop import paths
 
 
-def test_repo_root_contains_quickmemo_package():
-    """REPO_ROOT 直下に quickmemo/ パッケージがあるはず。"""
-    assert (paths.REPO_ROOT / "quickmemo").is_dir()
+def test_repo_root_contains_the_desktop_package():
+    """REPO_ROOT 直下に the_desktop/ パッケージがあるはず。"""
+    assert (paths.REPO_ROOT / "the_desktop").is_dir()
 
 
 def test_config_path_returns_under_config_dir():
@@ -34,11 +34,11 @@ def test_data_path_preserves_extension():
 
 def test_config_file_points_to_app_json():
     """config.py の CONFIG_FILE が新しい paths を経由している。"""
-    from quickmemo.config import CONFIG_FILE
+    from the_desktop.config import CONFIG_FILE
     assert CONFIG_FILE == paths.config_path("app")
 
 
 def test_bunpo_default_path_points_to_data_dir():
     """bunpo.py の DEFAULT_PATH が新しい paths を経由している。"""
-    from quickmemo.features.bunpo import DEFAULT_PATH
+    from the_desktop.features.bunpo import DEFAULT_PATH
     assert DEFAULT_PATH == paths.data_path("bunpo.jsonl")

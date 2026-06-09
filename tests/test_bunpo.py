@@ -6,7 +6,7 @@ from datetime import datetime
 
 import pytest
 
-from quickmemo.features.bunpo import BunpoStore, Entry, format_entry
+from the_desktop.features.bunpo import BunpoStore, Entry, format_entry
 
 
 def test_load_missing_returns_empty(tmp_path):
@@ -66,7 +66,7 @@ def test_format_entry_fallback_on_invalid_ts():
 
 def test_submitline_plain_enter_does_not_submit(qtbot):
     from PyQt6.QtCore import Qt
-    from quickmemo.features.bunpo import _SubmitLine
+    from the_desktop.features.bunpo import _SubmitLine
     line = _SubmitLine()
     qtbot.addWidget(line)
     received = []
@@ -77,7 +77,7 @@ def test_submitline_plain_enter_does_not_submit(qtbot):
 
 def test_submitline_ctrl_enter_emits_submit(qtbot):
     from PyQt6.QtCore import Qt
-    from quickmemo.features.bunpo import _SubmitLine
+    from the_desktop.features.bunpo import _SubmitLine
     line = _SubmitLine()
     qtbot.addWidget(line)
     received = []

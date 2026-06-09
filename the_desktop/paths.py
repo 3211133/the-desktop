@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-# quickmemo/paths.py → リポジトリルートは2つ上 (quickmemo の親)
+# the_desktop/paths.py → リポジトリルートは2つ上 (the_desktop の親)
 REPO_ROOT = Path(__file__).resolve().parent.parent
 CONFIG_DIR = REPO_ROOT / "config"
 DATA_DIR = REPO_ROOT / "data"

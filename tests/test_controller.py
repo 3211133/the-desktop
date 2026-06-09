@@ -5,7 +5,7 @@ from __future__ import annotations
 import threading
 from dataclasses import dataclass, field
 
-from quickmemo.controller import ToggleAction, ToggleController
+from the_desktop.controller import ToggleAction, ToggleController
 
 
 @dataclass

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from quickmemo.features.weather import (
+from the_desktop.features.weather import (
     DEFAULT_AREA,
     WeatherConfig,
     WeeklyForecast,
@@ -249,7 +249,7 @@ def test_save_creates_parent_dir(tmp_path):
 
 def test_widget_uses_injected_fetcher(qtbot):
     """fetcher を差し込めば実 HTTP なしで動く。3行 × 7列に値が入る。"""
-    from quickmemo.features.weather import WeatherWidget
+    from the_desktop.features.weather import WeatherWidget
     captured = []
 
     def fake_fetcher(area):
@@ -274,7 +274,7 @@ def test_widget_uses_injected_fetcher(qtbot):
 
 
 def test_widget_handles_fetcher_failure(qtbot):
-    from quickmemo.features.weather import WeatherWidget
+    from the_desktop.features.weather import WeatherWidget
 
     def boom(area):
         raise RuntimeError("network down")

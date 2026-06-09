@@ -1,4 +1,4 @@
-"""QuickMemo 設定の読み書き — pure (Qt/Win32 非依存)。"""
+"""the-desktop 設定の読み書き — pure (Qt/Win32 非依存)。"""
 
 from __future__ import annotations
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from quickmemo.config import Config, WindowGeometry, load_config, save_config
+from the_desktop.config import Config, WindowGeometry, load_config, save_config
 
 
 def test_load_missing_returns_default(tmp_path):

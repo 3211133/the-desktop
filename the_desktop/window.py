@@ -1,4 +1,4 @@
-"""QuickMemo MainWindow — 最前面・トレイ・空の中央領域。
+"""the-desktop MainWindow — 最前面・トレイ・空の中央領域。
 
 判定ロジック (CapsLock トグル) は ToggleController に委譲。
 MainWindow はプレゼンテーション層に徹する。
@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         self.cfg = cfg or Config()
         self._controller = None  # set_controller で注入
 
-        self.setWindowTitle("QuickMemo")
+        self.setWindowTitle("the-desktop")
         self._apply_topmost(self.cfg.topmost)
 
         g = self.cfg.window
@@ -77,7 +77,7 @@ class MainWindow(QMainWindow):
                 QApplication.style().StandardPixmap.SP_ComputerIcon
             )
         )
-        self.tray.setToolTip("QuickMemo")
+        self.tray.setToolTip("the-desktop")
 
         menu = QMenu()
         act_toggle = QAction("表示/復帰", self)
@@ -170,7 +170,7 @@ class MainWindow(QMainWindow):
         event.ignore()
         self.hide()
         self.tray.showMessage(
-            "QuickMemo",
+            "the-desktop",
             "トレイに格納しました。CapsLock で呼び出せます。",
             QSystemTrayIcon.MessageIcon.Information,
             1500,

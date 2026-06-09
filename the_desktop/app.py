@@ -1,4 +1,4 @@
-"""QuickMemo エントリポイント — 配線のみ。
+"""the-desktop エントリポイント — 配線のみ。
 
 依存:
   Win32Focus       (focus.py)     ─┐
@@ -22,7 +22,7 @@ from .window import MainWindow
 
 def main() -> int:
     app = QApplication(sys.argv)
-    app.setApplicationName("QuickMemo")
+    app.setApplicationName("the-desktop")
     app.setQuitOnLastWindowClosed(False)
 
     cfg = load_config()
