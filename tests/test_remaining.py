@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, time, timedelta
 
-from quickmemo.features.remaining import (
+from the_desktop.features.remaining import (
     DEFAULT_TARGET,
     RemainingConfig,
     format_remaining,

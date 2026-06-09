@@ -9,19 +9,19 @@ import pytest
 
 def test_imports_clean():
     """全モジュールが import できる。"""
-    from quickmemo import (  # noqa: F401
+    from the_desktop import (  # noqa: F401
         app, config, controller, focus, hotkey, protocols, window,
     )
 
 
 def test_focus_zero_hwnd_returns_false():
-    from quickmemo.focus import Win32Focus
+    from the_desktop.focus import Win32Focus
     assert Win32Focus().restore(0) is False
 
 
 def test_hotkey_constructible_without_install():
     """install() を呼ばない限り副作用なし。"""
-    from quickmemo.hotkey import CapsLockHook
+    from the_desktop.hotkey import CapsLockHook
     h = CapsLockHook()
     assert h._thread is None
     assert h._hook_id is None
@@ -30,8 +30,8 @@ def test_hotkey_constructible_without_install():
 
 @pytest.fixture
 def main_window(qtbot):
-    from quickmemo.config import Config
-    from quickmemo.window import MainWindow
+    from the_desktop.config import Config
+    from the_desktop.window import MainWindow
     w = MainWindow(Config())
     qtbot.addWidget(w)
     return w

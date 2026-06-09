@@ -3,12 +3,12 @@
 デスクトップ常駐の「機能の入り口」。CapsLock でアクティブウィンドウと往復できる。
 
 - 常に最前面
-- **CapsLock** で「現在のアクティブウィンドウ ⇄ QuickMemo」をトグル
+- **CapsLock** で「現在のアクティブウィンドウ ⇄ the-desktop」をトグル
 - CapsLock 本来の大文字ロックは抱殺（状態を変えない）
 - Esc で元のウィンドウに戻る
 - × ボタンで終了せずトレイに格納
 
-中身は空のフレーム。機能は `quickmemo/features/` 配下に Widget として追加していく想定。
+中身は空のフレーム。機能は `the_desktop/features/` 配下に Widget として追加していく想定。
 
 ## 要件
 
@@ -24,15 +24,15 @@
 pip install PyQt6
 ```
 
-`QuickMemo.pyw` を **エクスプローラーでダブルクリック** すれば常駐起動する (コンソール無し)。
+`the-desktop.pyw` を **エクスプローラーでダブルクリック** すれば常駐起動する (コンソール無し)。
 
 CLI から起動したい場合は:
 
 ```powershell
-pythonw -m quickmemo.app
+pythonw -m the_desktop.app
 ```
 
-`python -m quickmemo.app` でも動くが起動シェルが残るので非推奨。
+`python -m the_desktop.app` でも動くが起動シェルが残るので非推奨。
 
 ## テスト
 
@@ -45,15 +45,15 @@ python -m pytest tests/ -v
 実 API を叩かず、UI 状態 (天気の強度マーカー、取得失敗 等) を視覚確認したいときは:
 
 ```powershell
-pythonw QuickMemo-dev.pyw
+pythonw the-desktop-dev.pyw
 ```
 
-`QUICKMEMO_DEV_MOCKS=1` を立てて起動するので、各機能 widget は `quickmemo/dev.py` のモックフェッチャーへフォールバックします。
+`THE_DESKTOP_DEV_MOCKS=1` を立てて起動するので、各機能 widget は `the_desktop/dev.py` のモックフェッチャーへフォールバックします。
 
 ## 構成
 
 ```
-quickmemo/
+the_desktop/
 ├─ protocols.py    Focus / Hotkey の Protocol 定義 (pure)
 ├─ controller.py   トグル状態機械 (pure)
 ├─ config.py       設定の読み書き (pure)

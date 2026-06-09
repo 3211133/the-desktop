@@ -1,6 +1,6 @@
 """開発・UI 確認用のモック群。
 
-`QUICKMEMO_DEV_MOCKS=1` で起動すると、各機能 widget が自前のフェッチャーを
+`THE_DESKTOP_DEV_MOCKS=1` で起動すると、各機能 widget が自前のフェッチャーを
 持たない場合にこのモジュールのモックフェッチャーへフォールバックする。
 
 UI 状態 (強度マーカー / 取得失敗表示 等) を実 API なしで再現するのに使う。
@@ -14,7 +14,7 @@ from .features.weather import WeeklyForecast
 
 
 def is_dev_mocks_enabled() -> bool:
-    return os.environ.get("QUICKMEMO_DEV_MOCKS") not in (None, "", "0")
+    return os.environ.get("THE_DESKTOP_DEV_MOCKS") not in (None, "", "0")
 
 
 def mock_weather_fetcher(area: str) -> WeeklyForecast:

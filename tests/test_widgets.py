@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from PyQt6.QtWidgets import QLabel
 
-from quickmemo.widgets import ResponsiveRow
+from the_desktop.widgets import ResponsiveRow
 
 
 def test_starts_horizontal(qtbot):
