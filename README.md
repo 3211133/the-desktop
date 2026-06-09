@@ -40,6 +40,16 @@ pythonw -m quickmemo.app
 python -m pytest tests/ -v
 ```
 
+## 開発: UI モックで起動
+
+実 API を叩かず、UI 状態 (天気の強度マーカー、取得失敗 等) を視覚確認したいときは:
+
+```powershell
+pythonw QuickMemo-dev.pyw
+```
+
+`QUICKMEMO_DEV_MOCKS=1` を立てて起動するので、各機能 widget は `quickmemo/dev.py` のモックフェッチャーへフォールバックします。
+
 ## 構成
 
 ```
