@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from the_desktop.dev import (
     is_dev_mocks_enabled,
+    mock_news_fetcher,
     mock_weather_fetcher,
 )
 
@@ -41,6 +42,17 @@ def test_mock_weather_returns_seven_days():
     assert len(fc.codes) == 7
     assert len(fc.temps_max) == 7
     assert len(fc.temps_min) == 7
+
+
+def test_mock_news_respects_limit():
+    feed = mock_news_fetcher("anything", limit=5)
+    assert len(feed.items) == 5
+
+
+def test_mock_news_default_returns_ten():
+    feed = mock_news_fetcher("anything", limit=10)
+    assert len(feed.items) == 10
+    assert feed.items[0].title
 
 
 def test_widget_uses_mock_when_env_set(qtbot, monkeypatch):
