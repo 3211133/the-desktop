@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Iterable
 
 from PyQt6.QtCore import Qt, pyqtSignal
+
+from ..paths import data_path
 from PyQt6.QtWidgets import (
     QLineEdit,
     QListWidget,
@@ -39,7 +41,7 @@ class _SubmitLine(QLineEdit):
             return
         super().keyPressEvent(e)
 
-DEFAULT_PATH = Path.home() / ".quickmemo" / "bunpo.jsonl"
+DEFAULT_PATH = data_path("bunpo.jsonl")
 
 
 @dataclass(frozen=True)

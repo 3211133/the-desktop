@@ -6,8 +6,9 @@ import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-DATA_DIR = Path.home() / ".quickmemo"
-CONFIG_FILE = DATA_DIR / "config.json"
+from .paths import config_path
+
+CONFIG_FILE = config_path("app")
 
 
 @dataclass
