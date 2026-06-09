@@ -12,6 +12,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QApplication,
+    QHBoxLayout,
     QMainWindow,
     QMenu,
     QStatusBar,
@@ -37,12 +38,21 @@ class MainWindow(QMainWindow):
 
         from .features.bunpo import BunpoWidget
         from .features.remaining import RemainingWidget
+        from .features.weather import WeatherWidget
+        from .widgets import ResponsiveRow
 
         central = QWidget(self)
         v = QVBoxLayout(central)
         v.setContentsMargins(0, 0, 0, 0)
         v.setSpacing(0)
-        v.addWidget(RemainingWidget(parent=central))
+
+        # 上段: 定時カウントダウン + 天気
+        # 幅が狭ければ縦並び、広ければ横並びに自動切替
+        top = ResponsiveRow(threshold=380, parent=central)
+        top.add_widget(RemainingWidget(parent=top))
+        top.add_widget(WeatherWidget(parent=top))
+        v.addWidget(top)
+
         v.addWidget(BunpoWidget(parent=central), stretch=1)
         self.setCentralWidget(central)
 
