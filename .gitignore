@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# QuickMemo user files (per-project, not committed)
+/config/
+/data/
+launch_stderr.log
+launch_stdout.log
